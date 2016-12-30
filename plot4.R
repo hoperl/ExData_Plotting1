@@ -2,27 +2,16 @@
 # Read the data from the online zip file
 #-----------------------------------------
 
-#Create a temp file to store the zip file
 temp<-tempfile()
-
-#Download the zip file to tempfile
 download.file('https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip', temp)
-
-#Read the zip file over connection
 data<-read.table(unz(temp, "household_power_consumption.txt"), header=TRUE, sep=";", stringsAsFactors=FALSE, dec=".")
 head(data)
 dim(data)
-
-#Unlink the zip file
 unlink(temp)
 
-#Extract the subset of data for Feb 1st & 2nd of 2007 relevant for this project
-targetData <- data[data$Date %in% c("1/2/2007","2/2/2007") ,]
-dim(targetData)
-
 #----------------------------------------------------------------------------
-# Plot each of the below states over date time interval and save the result 
-# as a PNG file, plot4.png
+# Plot each of the below statistics over date time interval and save the  
+# result as a PNG file, plot4.png
 #
 # 1. Global Active Power
 # 2. Voltage
@@ -30,12 +19,13 @@ dim(targetData)
 # 4. Global_reactive_power
 #----------------------------------------------------------------------------
 
-#Open a device to write into a PNG file of 480x480 dimensions
+#Extract the subset of data for Feb 1st & 2nd of 2007 relevant for this project
+targetData <- data[data$Date %in% c("1/2/2007","2/2/2007") ,]
+dim(targetData)
+
 png("plot4.png", width=480, height=480, bg = "transparent")
-#Set 2x2 plots area
 par(mfrow = c(2, 2)) 
 
-#Extract the datetime interval
 interval <- strptime(paste(targetData$Date, targetData$Time, sep=" "), "%d/%m/%Y %H:%M:%S") 
 head(interval)
 
@@ -61,5 +51,4 @@ legend("topright", c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"), lty=
 globalReactivePower <- as.numeric(targetData$Global_reactive_power)
 plot(interval, globalReactivePower, type="l", xlab="datetime", ylab="Global_reactive_power")
 
-#Close the plotting device of PNG
 dev.off()
